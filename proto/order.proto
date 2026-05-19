@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package order;
+
+// ─────────────────────────────────────────
+//  Service
+// ─────────────────────────────────────────
+service OrderService {
+  rpc CreateOrder     (CreateOrderRequest)  returns (OrderResponse);
+  rpc GetOrder        (GetOrderRequest)     returns (OrderResponse);
+  rpc ListOrders      (ListOrdersRequest)   returns (ListOrdersResponse);
+  rpc UpdateOrderStatus (UpdateStatusRequest) returns (OrderResponse);
+}
+
+// ─────────────────────────────────────────
+//  Enums
+// ─────────────────────────────────────────
+enum OrderStatus {
+  PENDING    = 0;
+  CONFIRMED  = 1;
+  ASSIGNED   = 2;
+  IN_TRANSIT = 3;
+  DELIVERED  = 4;
+  CANCELLED  = 5;
+}
+
+// ─────────────────────────────────────────
+//  Messages — Requêtes
+// ─────────────────────────────────────────
+message CreateOrderRequest {
+  string customer_name    = 1;
+  string customer_phone   = 2;
+  string pickup_address   = 3;
+  string delivery_address = 4;
+  repeated OrderItem items = 5;
+}
+
+message GetOrderRequest {
+  string order_id = 1;
+}
+
+message ListOrdersRequest {
+  OrderStatus status = 1;   // filtre optionnel (0 = tous)
+  int32 limit        = 2;
+  int32 offset       = 3;
+}
+
+message UpdateStatusRequest {
+  string      order_id = 1;
+  OrderStatus status   = 2;
+}
+
+// ─────────────────────────────────────────
+//  Messages — Réponses
+// ─────────────────────────────────────────
+message OrderItem {
+  string description = 1;
+  int32  quantity    = 2;
+  double price       = 3;
+}
+
+message OrderResponse {
+  string      order_id         = 1;
+  string      customer_name    = 2;
+  string      customer_phone   = 3;
+  string      pickup_address   = 4;
+  string      delivery_address = 5;
+  OrderStatus status           = 6;
+  string      created_at       = 7;
+  repeated OrderItem items     = 8;
+}
+
+message ListOrdersResponse {
+  repeated OrderResponse orders = 1;
+  int32 total                   = 2;
+}

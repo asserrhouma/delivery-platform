@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package tracking;
+
+// ─────────────────────────────────────────
+//  Service
+// ─────────────────────────────────────────
+service TrackingService {
+  rpc GetTracking       (GetTrackingRequest)    returns (TrackingResponse);
+  rpc GetHistory        (GetHistoryRequest)     returns (TrackingHistoryResponse);
+  rpc AddEvent          (AddEventRequest)       returns (TrackingEvent);
+}
+
+// ─────────────────────────────────────────
+//  Enums
+// ─────────────────────────────────────────
+enum TrackingEventType {
+  ORDER_CREATED      = 0;
+  DRIVER_ASSIGNED    = 1;
+  PICKUP_CONFIRMED   = 2;
+  IN_TRANSIT         = 3;
+  DELIVERED          = 4;
+  DELIVERY_FAILED    = 5;
+}
+
+// ─────────────────────────────────────────
+//  Messages — Requêtes
+// ─────────────────────────────────────────
+message GetTrackingRequest {
+  string order_id = 1;
+}
+
+message GetHistoryRequest {
+  string order_id = 1;
+}
+
+message AddEventRequest {
+  string           order_id    = 1;
+  TrackingEventType event_type = 2;
+  string           description = 3;
+  string           location    = 4;   // adresse ou coordonnées texte
+}
+
+// ─────────────────────────────────────────
+//  Messages — Réponses
+// ─────────────────────────────────────────
+message TrackingEvent {
+  string            event_id    = 1;
+  string            order_id    = 2;
+  TrackingEventType event_type  = 3;
+  string            description = 4;
+  string            location    = 5;
+  string            timestamp   = 6;
+}
+
+message TrackingResponse {
+  string            order_id      = 1;
+  TrackingEventType current_status = 2;
+  string            last_location  = 3;
+  string            last_updated   = 4;
+  string            driver_name    = 5;
+}
+
+message TrackingHistoryResponse {
+  string                  order_id = 1;
+  repeated TrackingEvent  events   = 2;
+}

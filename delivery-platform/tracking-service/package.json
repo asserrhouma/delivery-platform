@@ -1,0 +1,20 @@
+{
+  "name": "tracking-service",
+  "version": "1.0.0",
+  "description": "Microservice for tracking order and delivery events",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.9.0",
+    "@grpc/proto-loader": "^0.7.0",
+    "better-sqlite3": "^9.0.0",
+    "kafkajs": "^2.2.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}

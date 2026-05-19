@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package delivery;
+
+// ────────────────────────────────────────────────────────────
+// Messages
+// ────────────────────────────────────────────────────────────
+
+message Driver {
+  string driver_id = 1;
+  string name = 2;
+  string phone = 3;
+  string vehicle_type = 4;
+  int32 status = 5;  // 0=AVAILABLE, 1=BUSY, 2=OFFLINE
+}
+
+message DriverResponse {
+  string driver_id = 1;
+  string name = 2;
+  string phone = 3;
+  string vehicle_type = 4;
+  int32 status = 5;
+}
+
+message GetDriverRequest {
+  string driver_id = 1;
+}
+
+message ListDriversResponse {
+  repeated DriverResponse drivers = 1;
+}
+
+message Order {
+  string order_id = 1;
+  string pickup_address = 2;
+  string delivery_address = 3;
+  string customer_name = 4;
+}
+
+message Delivery {
+  string delivery_id = 1;
+  string order_id = 2;
+  string driver_id = 3;
+  string driver_name = 4;
+  string pickup_address = 5;
+  string delivery_address = 6;
+  int32 status = 7;  // 0=ASSIGNED, 1=IN_PROGRESS, 2=DELAYED, 3=COMPLETED, 4=FAILED
+  string assigned_at = 8;
+  string completed_at = 9;
+}
+
+message DeliveryResponse {
+  string delivery_id = 1;
+  string order_id = 2;
+  string driver_id = 3;
+  string driver_name = 4;
+  string pickup_address = 5;
+  string delivery_address = 6;
+  int32 status = 7;
+  string assigned_at = 8;
+  string completed_at = 9;
+}
+
+message GetDeliveryRequest {
+  string delivery_id = 1;
+}
+
+message ListDeliveriesRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
+
+message ListDeliveriesResponse {
+  repeated DeliveryResponse deliveries = 1;
+  int32 total = 2;
+}
+
+message CompleteDeliveryRequest {
+  string delivery_id = 1;
+  bool success = 2;
+  string note = 3;
+}
+
+message Empty {}
+
+// ────────────────────────────────────────────────────────────
+// Service
+// ────────────────────────────────────────────────────────────
+
+service DeliveryService {
+  rpc RegisterDriver(Driver) returns (DriverResponse);
+  rpc GetDriver(GetDriverRequest) returns (DriverResponse);
+  rpc ListAvailableDrivers(Empty) returns (ListDriversResponse);
+  rpc AssignDelivery(Order) returns (DeliveryResponse);
+  rpc GetDelivery(GetDeliveryRequest) returns (DeliveryResponse);
+  rpc ListDeliveries(ListDeliveriesRequest) returns (ListDeliveriesResponse);
+  rpc CompleteDelivery(CompleteDeliveryRequest) returns (DeliveryResponse);
+}

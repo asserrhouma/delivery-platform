@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package delivery;
+
+// ─────────────────────────────────────────
+//  Service
+// ─────────────────────────────────────────
+service DeliveryService {
+  rpc RegisterDriver    (RegisterDriverRequest)  returns (DriverResponse);
+  rpc GetDriver         (GetDriverRequest)        returns (DriverResponse);
+  rpc ListAvailableDrivers (Empty)               returns (ListDriversResponse);
+  rpc AssignDelivery    (AssignDeliveryRequest)  returns (DeliveryResponse);
+  rpc GetDelivery       (GetDeliveryRequest)     returns (DeliveryResponse);
+  rpc CompleteDelivery  (CompleteDeliveryRequest) returns (DeliveryResponse);
+}
+
+// ─────────────────────────────────────────
+//  Enums
+// ─────────────────────────────────────────
+enum DriverStatus {
+  AVAILABLE   = 0;
+  BUSY        = 1;
+  OFFLINE     = 2;
+}
+
+enum DeliveryStatus {
+  PENDING_ASSIGNMENT = 0;
+  ASSIGNED_TO_DRIVER = 1;
+  PICKED_UP          = 2;
+  COMPLETED          = 3;
+  FAILED             = 4;
+}
+
+// ─────────────────────────────────────────
+//  Messages — Requêtes
+// ─────────────────────────────────────────
+message Empty {}
+
+message RegisterDriverRequest {
+  string name         = 1;
+  string phone        = 2;
+  string vehicle_type = 3;  // "moto", "voiture", "vélo"
+}
+
+message GetDriverRequest {
+  string driver_id = 1;
+}
+
+message AssignDeliveryRequest {
+  string order_id         = 1;
+  string pickup_address   = 2;
+  string delivery_address = 3;
+  string customer_name    = 4;
+}
+
+message GetDeliveryRequest {
+  string delivery_id = 1;
+}
+
+message CompleteDeliveryRequest {
+  string delivery_id = 1;
+  bool   success     = 2;
+  string note        = 3;
+}
+
+// ─────────────────────────────────────────
+//  Messages — Réponses
+// ─────────────────────────────────────────
+message DriverResponse {
+  string       driver_id    = 1;
+  string       name         = 2;
+  string       phone        = 3;
+  string       vehicle_type = 4;
+  DriverStatus status       = 5;
+}
+
+message ListDriversResponse {
+  repeated DriverResponse drivers = 1;
+}
+
+message DeliveryResponse {
+  string         delivery_id      = 1;
+  string         order_id         = 2;
+  string         driver_id        = 3;
+  string         driver_name      = 4;
+  string         pickup_address   = 5;
+  string         delivery_address = 6;
+  DeliveryStatus status           = 7;
+  string         assigned_at      = 8;
+  string         completed_at     = 9;
+}
